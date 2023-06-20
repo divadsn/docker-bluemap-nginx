@@ -22,11 +22,11 @@ RUN tmpdir=$(mktemp -d) && \
     rm -rf "${tmpdir}"
 
 # Patch index.php to use database credentials from environment variables
-RUN sed -i 's/\$hostname = .*/$hostname = getenv("MYSQL_HOSTNAME");/' /var/www/html/index.php && \
-    sed -i 's/\$port = .*/$port = getenv("MYSQL_PORT");/' /var/www/html/index.php && \
-    sed -i 's/\$username = .*/$username = getenv("MYSQL_USERNAME");/' /var/www/html/index.php && \
-    sed -i 's/\$password = .*/$password = getenv("MYSQL_PASSWORD");/' /var/www/html/index.php && \
-    sed -i 's/\$database = .*/$database = getenv("MYSQL_DATABASE");/' /var/www/html/index.php
+RUN sed -i 's/\$hostname = .*/$hostname = getenv("MYSQL_HOST") ?: "127.0.0.1";/' /var/www/html/index.php && \
+    sed -i 's/\$port     = .*/$port     = getenv("MYSQL_PORT") ?: 3306;/' /var/www/html/index.php && \
+    sed -i 's/\$username = .*/$username = getenv("MYSQL_USER") ?: "root";/' /var/www/html/index.php && \
+    sed -i 's/\$password = .*/$password = getenv("MYSQL_PASSWORD") ?: "";/' /var/www/html/index.php && \
+    sed -i 's/\$database = .*/$database = getenv("MYSQL_DATABASE") ?: "bluemap";/' /var/www/html/index.php
 
 # Copy nginx configuration
 COPY config/nginx.conf /etc/nginx/nginx.conf

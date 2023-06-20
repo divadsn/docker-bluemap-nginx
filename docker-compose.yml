@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  bluemap:
+    image: divadsn/bluemap-nginx:latest
+    restart: unless-stopped
+    ports:
+      - "8100:80/tcp"
+    depends_on:
+      - mariadb
+    environment:
+      MYSQL_HOST: mariadb
+      MYSQL_PORT: '3306'
+      MYSQL_USER: bluemap
+      MYSQL_PASSWORD: thisisaverysecurepassword
+      MYSQL_DATABASE: bluemap
+    volumes:
+      - ./data/settings.json:/var/www/html/settings.json
+
+  mariadb:
+    image: mariadb:10.5
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: bluemap
+      MYSQL_PASSWORD: thisisaverysecurepassword
+      MYSQL_INITDB_SKIP_TZINFO: '1'
+    volumes:
+      - mysql-vol:/var/lib/mysql
+      - mysql-socket-vol:/var/run/mysqld
+
+volumes:
+  mysql-vol:
+  mysql-socket-vol:
