@@ -25,8 +25,6 @@ services:
       MYSQL_INITDB_SKIP_TZINFO: '1'
     volumes:
       - mysql-vol:/var/lib/mysql
-      - mysql-socket-vol:/var/run/mysqld
 
 volumes:
   mysql-vol:
-  mysql-socket-vol:

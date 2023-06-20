@@ -1,6 +1,8 @@
 # docker-bluemap-nginx
 Customized version of trafex/php-nginx with BlueMap webapp pre-installed.
 
+[![Build and push Docker image](https://github.com/divadsn/docker-bluemap-nginx/actions/workflows/docker-build.yml/badge.svg)](https://github.com/divadsn/docker-bluemap-nginx/actions/workflows/docker-build.yml)
+
 ## How to use?
 You can deploy this image using Docker Compose. Here is an example of a [docker-compose.yml](https://github.com/divadsn/docker-bluemap-nginx/blob/master/docker-compose.yml) file:
 ```yaml
@@ -31,11 +33,9 @@ services:
       MYSQL_INITDB_SKIP_TZINFO: '1'
     volumes:
       - mysql-vol:/var/lib/mysql
-      - mysql-socket-vol:/var/run/mysqld
 
 volumes:
   mysql-vol:
-  mysql-socket-vol:
 ```
 
 You can also deploy this image using the following command:
@@ -52,7 +52,7 @@ docker run -d \
   divadsn/bluemap-nginx:latest
 ```
 
-Note that in both cases, you need to create a `settings.json` file in the `./data` directory. You can also find this file in the BlueMap data directory.
+Note that in both cases, you need to create a `settings.json` file in the `./data` directory. You can also find this file in the BlueMap webroot directory.
 
 ## Environment variables
 | Variable | Description | Default value |
@@ -65,6 +65,6 @@ Note that in both cases, you need to create a `settings.json` file in the `./dat
 
 ## Limitations
 - This image does not support HTTPS out of the box. You need to modify the Nginx `default.conf` in order to enable HTTPS or use a reverse proxy.
-- You need to enable `write-markers-interval` and `write-players-interval` in BlueMap in order for live data to work.
+- You need to enable `write-markers-interval` and `write-players-interval` in BlueMap in order for live data to be written to the database.
 
 You can also modify the `default.conf` to [proxy live data requests](https://bluemap.bluecolored.de/wiki/webserver/ExternalWebserversSQL.html) to the BlueMap integrated webserver.
