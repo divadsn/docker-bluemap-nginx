@@ -1,0 +1,30 @@
+name: Get latest release version
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch release version
+        id: latest-release
+        run: echo version=$(curl -sL "https://api.github.com/repos/BlueMap-Minecraft/BlueMap/releases/latest" | jq -r ".tag_name" | sed "s/^v//") >> $GITHUB_OUTPUT
+      - name: Modify version in Dockerfile
+        run: |
+          sed -i "s/^ARG BLUEMAP_VERSION=.*$/ARG BLUEMAP_VERSION=${{ steps.latest-release.outputs.version }}/" Dockerfile
+          git diff
+      - name: Check for modified files
+        id: git-check
+        run: echo modified=$([ -z "`git status --porcelain`" ] && echo "false" || echo "true") >> $GITHUB_OUTPUT
+      - name: Commit latest release version
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'David Sn'
+          git config --global user.email 'divadsn@users.noreply.github.com'
+          git commit -am "Bump up BlueMap version to v${{ steps.latest-release.outputs.version }}"
+          git tag ${{ steps.latest-release.outputs.version }}
+          git push && git push --tags
