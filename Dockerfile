@@ -17,16 +17,15 @@ RUN tmpdir=$(mktemp -d) && \
     curl -L "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v${BLUEMAP_VERSION}/BlueMap-${BLUEMAP_VERSION}-spigot.jar" -o "${tmpdir}/BlueMap.jar" && \
     unzip "${tmpdir}/BlueMap.jar" -d "${tmpdir}" && \
     unzip "${tmpdir}/de/bluecolored/bluemap/webapp.zip" -d /var/www/html && \
-    mv /var/www/html/_index.php /var/www/html/index.php && \
     chown -R nobody:nobody /var/www/html && \
     rm -rf "${tmpdir}"
 
-# Patch index.php to use database credentials from environment variables
-RUN sed -i 's/\$hostname = .*/$hostname = getenv("MYSQL_HOST") ?: "127.0.0.1";/' /var/www/html/index.php && \
-    sed -i 's/\$port     = .*/$port     = getenv("MYSQL_PORT") ?: 3306;/' /var/www/html/index.php && \
-    sed -i 's/\$username = .*/$username = getenv("MYSQL_USER") ?: "root";/' /var/www/html/index.php && \
-    sed -i 's/\$password = .*/$password = getenv("MYSQL_PASSWORD") ?: "";/' /var/www/html/index.php && \
-    sed -i 's/\$database = .*/$database = getenv("MYSQL_DATABASE") ?: "bluemap";/' /var/www/html/index.php
+# Patch mysql.php to use database credentials from environment variables
+RUN sed -i 's/\$hostname = .*/$hostname = getenv("MYSQL_HOST") ?: "127.0.0.1";/' /var/www/html/mysql.php && \
+    sed -i 's/\$port     = .*/$port     = getenv("MYSQL_PORT") ?: 3306;/' /var/www/html/mysql.php && \
+    sed -i 's/\$username = .*/$username = getenv("MYSQL_USER") ?: "root";/' /var/www/html/mysql.php && \
+    sed -i 's/\$password = .*/$password = getenv("MYSQL_PASSWORD") ?: "";/' /var/www/html/mysql.php && \
+    sed -i 's/\$database = .*/$database = getenv("MYSQL_DATABASE") ?: "bluemap";/' /var/www/html/mysql.php
 
 # Copy nginx configuration
 COPY config/nginx.conf /etc/nginx/nginx.conf
