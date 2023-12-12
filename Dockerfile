@@ -4,7 +4,7 @@ LABEL maintainer="David Sn <divad.nnamtdeis@gmail.com>"
 LABEL description="Customized version of trafex/php-nginx for BlueMap."
 
 # Set BlueMap version
-ARG BLUEMAP_VERSION=3.19
+ARG BLUEMAP_VERSION=3.20
 
 # Set user to root for installation
 USER root
