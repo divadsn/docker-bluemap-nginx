@@ -20,12 +20,14 @@ RUN tmpdir=$(mktemp -d) && \
     chown -R nobody:nobody /var/www/html && \
     rm -rf "${tmpdir}"
 
-# Patch mysql.php to use database credentials from environment variables
-RUN sed -i 's/\$hostname = .*/$hostname = getenv("MYSQL_HOST") ?: "127.0.0.1";/' /var/www/html/mysql.php && \
-    sed -i 's/\$port     = .*/$port     = getenv("MYSQL_PORT") ?: 3306;/' /var/www/html/mysql.php && \
-    sed -i 's/\$username = .*/$username = getenv("MYSQL_USER") ?: "root";/' /var/www/html/mysql.php && \
-    sed -i 's/\$password = .*/$password = getenv("MYSQL_PASSWORD") ?: "";/' /var/www/html/mysql.php && \
-    sed -i 's/\$database = .*/$database = getenv("MYSQL_DATABASE") ?: "bluemap";/' /var/www/html/mysql.php
+# Patch sql.php to use database credentials from environment variables
+RUN sed -i "s/\$driver   = .*/$driver   = getenv('DB_DRIVER') ?: 'mysql';/" /var/www/html/sql.php && \
+    sed -i "s/\$hostname = .*/$hostname = getenv('DB_HOST') ?: '127.0.0.1';/" /var/www/html/sql.php && \
+    sed -i "s/\$port     = .*/$port     = getenv('DB_PORT') ?: 3306;/" /var/www/html/sql.php && \
+    sed -i "s/\$username = .*/$username = getenv('DB_USER') ?: 'root';/" /var/www/html/sql.php && \
+    sed -i "s/\$password = .*/$password = getenv('DB_PASSWORD') ?: '';/" /var/www/html/sql.php && \
+    sed -i "s/\$database = .*/$database = getenv('DB_NAME') ?: 'bluemap';/" /var/www/html/sql.php && \
+    sed -i "s/\$hiresCompression = .*/$hiresCompression = getenv('HIRES_COMPRESSION') ?: 'gzip';/" /var/www/html/sql.php
 
 # Copy nginx configuration
 COPY config/nginx.conf /etc/nginx/nginx.conf
